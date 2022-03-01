@@ -160,7 +160,7 @@ def selection_sort(draw_info, ascending=True):
                 min_idx = j
 
         lst[i], lst[min_idx] = lst[min_idx], lst[i]
-        draw_list(draw_info, {i: draw_info.GREEN, min_idx: draw_info.RED}, True)
+        draw_list(draw_info, {min_idx: draw_info.GREEN, i: draw_info.RED}, True)
         yield True
 
     return lst
