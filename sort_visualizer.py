@@ -10,6 +10,7 @@ class DrawInformation:
     WHITE = 255, 255, 255
     GREEN = 0, 255, 0
     RED = 255, 0, 0
+    BLUE = 0, 0, 255
     GREY = 128, 128, 128
     BACKGROUND_COLOR = WHITE
     SIDE_PAD = 100
@@ -62,7 +63,7 @@ def draw(draw_info, algo_name, ascending):
 
     # sorting controls
     controls = draw_info.FONT.render(
-        "I - Insertion Sort | B - Bubble Sort | S - Selection Sort", 1, draw_info.BLACK)
+        "I - Insertion Sort | B - Bubble Sort | S - Selection Sort | Q - Quick Sort | M - Merge Sort", 1, draw_info.BLACK)
     draw_info.window.blit(
         controls, (draw_info.width/2 - controls.get_width()/2, 90))
     draw_list(draw_info)
@@ -165,6 +166,78 @@ def selection_sort(draw_info, ascending=True):
 
     return lst
 
+def merge_sort(draw_info, ascending=True):
+    lst = draw_info.lst
+
+    while True:
+        ascending_sort = i > 0 and lst[i - 1] > current and ascending
+        descending_sort = i > 0 and lst[i - 1] < current and not ascending
+
+        if not ascending_sort and not descending_sort:
+            break
+        if len(lst) > 1:
+            mid = len(lst)//2
+
+            L = lst[:mid]
+            R = lst[mid:]
+            merge_sort(L)
+            merge_sort(R)
+
+            i = j = k = 0
+
+            while i < len(L) and j < len(R):
+                if L[i] < R[j]:
+                    lst[k] = L[i]
+                    i += 1
+                else:
+                    lst[k] = R[j]
+                    j += 1
+                k += 1
+            draw_list(draw_info, {i: draw_info.GREEN, j: draw_info.RED, k:draw_info.BLUE}, True)
+            while i < len(L):
+                lst[k] = L[i]
+                i += 1
+                k += 1
+  
+            while j < len(R):
+                lst[k] = R[j]
+                j += 1
+                k += 1
+
+
+
+
+def quick_sort(draw_info, ascending=True):
+
+    def partition(lst):
+
+        pivot = lst[len(lst)-1]
+        high = pivot
+        low = 1
+        i = (low-1)
+
+        for j in range(low, high):
+            if lst[j] <= pivot:
+                i += 1
+                lst[i], lst[j] = lst[j], lst[i]
+            
+        lst[i+1], lst[pivot] = lst[pivot], lst[i+1]
+        draw_list(draw_info, {i+1: draw_info.GREEN, i: pivot.RED}, True)
+        return (i+1)
+
+    lst = draw_info.lst
+    if len(lst) == 1:
+        return lst
+
+    pivot = lst[len(lst)-1]
+    high = pivot
+    low = 1
+    i = (low-1)
+    if low < high:
+        pi = partition(lst, low, high)
+        quick_sort(lst, low, pi-1)
+        quick_sort(lst, pi+1, high)
+
 
 # Run the display
 def main():
@@ -223,6 +296,12 @@ def main():
             elif event.key == pygame.K_s and not sorting:
                 sorting_algorithm = selection_sort
                 sorting_algo_name = "Selection Sort"
+            elif event.key == pygame.K_q and not sorting:
+                sorting_algorithm = quick_sort
+                sorting_algo_name = "Quick Sort"
+            elif event.key == pygame.K_m and not sorting:
+                sorting_algorithm = merge_sort
+                sorting_algo_name = "Merge Sort"
     pygame.quit()
 
 
